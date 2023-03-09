@@ -76,8 +76,12 @@ export default {
             //this.$router.push({name:"search",params:{keyword:''||undefined},query:{k:this.keyword.toUpperCase()}})
             //面试题4：路由组件能不能传递props数据？
             //可以：三种写法
-            this.$router.push({name:"search",params:{keyword:this.keyword},query:{k:this.keyword.toUpperCase()}})
-            
+            //如果有query，也要带过去
+            if(this.$route.query){
+                let loction = {name:"search",params:{keyword:this.keyword || undefined}}
+                loction.query = this.$route.query;
+                this.$router.push(loction);
+            }
         }
     },
 }

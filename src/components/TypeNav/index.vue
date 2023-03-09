@@ -120,7 +120,7 @@ export default {
             //如果有categoryname属性，一定是a标签
             if(categoryname){
                 //整理路由跳转的参数
-                let location = {name:'search'};
+                let loction = {name:'search'};
                 let query = {categoryName:categoryname};
                 //怎么知道是哪一级的a标签
                 if(category1id){
@@ -130,10 +130,15 @@ export default {
                 }else{
                     query.category3Id = category3id;
                 }
-                //整理完参数
-                location.query = query;
-                //路由跳转
-                this.$router.push(location);
+                //判断：如果路由跳转的时候，带有params参数，捎带传递过去
+                if(this.$route.params){
+                    loction.params = this.$route.params;
+                    //动态给loction配置对象添加query属性
+                    loction.query = query;
+                    //路由跳转
+                    this.$router.push(loction);
+                }
+                
             }
         },
         //当鼠标移入时将商品分类进行展示
