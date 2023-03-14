@@ -5,8 +5,8 @@
                     <!--banner轮播-->
                     <div class="swiper-container" id="mySwiper">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                <img src="./images/banner1.jpg" />
+                            <div class="swiper-slide" v-for="(carousel,index) in bannerList" :key="carousel.id">
+                                <img :src="carousel.imgUrl" />
                             </div>
                         </div>
                         <!-- 如果需要分页器 -->
@@ -102,12 +102,67 @@
 
 <script>
 import { mapState } from 'vuex';
+//引包
+import Swiper from "swiper"
 export default {
     name:'',
+    data() {
+        return {
+            msg:""
+        }
+    },
     mounted(){
         //派发action：通过Vuex发起ajax请求，将数据存储在仓库中
         this.$store.dispatch('getBannerList');
+        //在new Swiper之前 页面中的结构必须有
+        //直接new发现不行，因为dispatch涉及异步语句，导致v-for遍历时结构不完全
+        setTimeout(()=>{
+            var mySwiper = new Swiper('.swiper-container', {
+                //direction: 'vertical', // 垂直切换选项
+                loop: true, // 循环模式选项
+
+                // 如果需要分页器
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable:true,
+                },
+
+                // 如果需要前进后退按钮
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+
+                // 如果需要滚动条
+                scrollbar: {
+                    el: '.swiper-scrollbar',
+                },
+            })
+        },1000);
     },
+    // updated(){
+    //     var mySwiper = new Swiper('.swiper-container', {
+    //         //direction: 'vertical', // 垂直切换选项
+    //         loop: true, // 循环模式选项
+
+    //         // 如果需要分页器
+    //         pagination: {
+    //             el: '.swiper-pagination',
+    //         },
+
+    //         // 如果需要前进后退按钮
+    //         navigation: {
+    //             nextEl: '.swiper-button-next',
+    //             prevEl: '.swiper-button-prev',
+    //         },
+
+    //         // 如果需要滚动条
+    //         scrollbar: {
+    //             el: '.swiper-scrollbar',
+    //         },
+    //     })
+    // },
+
     computed:{
         ...mapState({
             bannerList:state=>state.home.bannerList
