@@ -3,19 +3,20 @@
             <div class="sortList clearfix">
                 <div class="center">
                     <!--banner轮播-->
-                    <div class="swiper-container" id="mySwiper">
+                    <Carousel :list="bannerList"/>
+                    <!-- <div class="swiper-container" ref="mySwiper">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide" v-for="(carousel,index) in bannerList" :key="carousel.id">
                                 <img :src="carousel.imgUrl" />
                             </div>
                         </div>
-                        <!-- 如果需要分页器 -->
+                        如果需要分页器
                         <div class="swiper-pagination"></div>
 
-                        <!-- 如果需要导航按钮 -->
+                        如果需要导航按钮
                         <div class="swiper-button-prev"></div>
                         <div class="swiper-button-next"></div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="right">
                     <div class="news">
@@ -103,7 +104,7 @@
 <script>
 import { mapState } from 'vuex';
 //引包
-import Swiper from "swiper"
+// import Swiper from "swiper"
 export default {
     name:'',
     data() {
@@ -116,29 +117,29 @@ export default {
         this.$store.dispatch('getBannerList');
         //在new Swiper之前 页面中的结构必须有
         //直接new发现不行，因为dispatch涉及异步语句，导致v-for遍历时结构不完全
-        setTimeout(()=>{
-            var mySwiper = new Swiper('.swiper-container', {
-                //direction: 'vertical', // 垂直切换选项
-                loop: true, // 循环模式选项
+        // setTimeout(()=>{
+            // var mySwiper = new Swiper('.swiper-container', {
+            //     //direction: 'vertical', // 垂直切换选项
+            //     loop: true, // 循环模式选项
 
-                // 如果需要分页器
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable:true,
-                },
+            //     // 如果需要分页器
+            //     pagination: {
+            //         el: '.swiper-pagination',
+            //         clickable:true,
+            //     },
 
-                // 如果需要前进后退按钮
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
+            //     // 如果需要前进后退按钮
+            //     navigation: {
+            //         nextEl: '.swiper-button-next',
+            //         prevEl: '.swiper-button-prev',
+            //     },
 
-                // 如果需要滚动条
-                scrollbar: {
-                    el: '.swiper-scrollbar',
-                },
-            })
-        },1000);
+            //     // 如果需要滚动条
+            //     scrollbar: {
+            //         el: '.swiper-scrollbar',
+            //     },
+            // })
+        // },1000);
     },
     // updated(){
     //     var mySwiper = new Swiper('.swiper-container', {
@@ -167,7 +168,44 @@ export default {
         ...mapState({
             bannerList:state=>state.home.bannerList
         })
-    }
+    },
+    // watch:{
+    //     //监听bannerList数据的变化：因为这条数据发生过变化--由空数组变为数组里有四个元素
+    //     bannerList:{
+    //         immediate:true,
+    //         handler(newValue,oldValue){
+    //             //现在通过watch监听bannerList属性的属性值变化
+    //             //如果执行handle方法，代表组件实例身上这个属性的属性值已经有了（数组：四个元素）
+    //             //当前这个函数执行：只能保证bannerList数据有了，但是没办法保证v-for执行完毕
+    //             //v-for执行完毕了，才有结构，现在在watch中是无法保证的
+    //             //netxTick
+    //             this.$nextTick(()=>{
+    //                 //当你执行这个回调的时候，保证服务器的数据回来了，v-for执行完毕
+    //                 var mySwiper = new Swiper(this.$refs.mySwiper, {
+    //                     //direction: 'vertical', // 垂直切换选项
+    //                     loop: true, // 循环模式选项
+
+    //                     // 如果需要分页器
+    //                     pagination: {
+    //                         el: '.swiper-pagination',
+    //                         clickable: true,
+    //                     },
+
+    //                     // 如果需要前进后退按钮
+    //                     navigation: {
+    //                         nextEl: '.swiper-button-next',
+    //                         prevEl: '.swiper-button-prev',
+    //                     },
+
+    //                     // 如果需要滚动条
+    //                     scrollbar: {
+    //                         el: '.swiper-scrollbar',
+    //                     },
+    //                 })
+    //             });
+    //         }
+    //     }
+    // },
 }
 </script>
 
