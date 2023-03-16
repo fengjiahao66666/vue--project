@@ -120,9 +120,38 @@
     components: {
       SearchSelector
     },
+    data() {
+      return {
+        //带给服务器的参数
+        searchParams:{
+          category1Id: "",
+          category2Id: "",
+          category3Id: "",
+          //分类名字
+          categoryName: "",
+          //关键字
+          keyword: "",
+          //排序
+          order: "",
+          //分页器用的：代表当前第几页
+          pageNo: 1,
+          //代表每一页展示数据个数
+          pageSize: 3,
+          //平台售卖属性操作带的参数
+          props: [""],
+          //品牌
+          trademark: ""
+        },
+      };
+    },
+    //组件挂载完毕执行一次（仅一次
     mounted() {
-      //先测试接口返回的数据格式
-      this.$store.dispatch('getSearchList',{})
+      //再发请求之前带给服务器参数【searchParams参数发生变化有数值带给服务器
+      this.getData();
+    },
+    //当组件挂载完毕之前执行一次【先于mounted之前
+    beforeMount(){
+
     },
     computed:{
       // ...mapState({
@@ -130,7 +159,14 @@
       // })
       //mapGetters里面的写法传递的是数组，因为getters计算是没有划分模块的
       ...mapGetters(['goodsList'])
-    }
+    },
+    methods: {
+      //向服务器发请求获取search模块数据 根据参数不同返回不同数据进行展示
+      //把这次请求封装成一个函数：当需要时调用即可
+      getData(){
+        this.$store.dispatch('getSearchList',this.searchParams);
+      }
+    },
   }
 </script>
 
