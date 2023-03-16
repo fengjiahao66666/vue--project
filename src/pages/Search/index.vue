@@ -151,7 +151,15 @@
     },
     //当组件挂载完毕之前执行一次【先于mounted之前
     beforeMount(){
-
+      //console.log(this.$route.query);
+      //复杂的写法
+      // this.searchParams.category1Id = this.$route.query.category1Id;
+      // this.searchParams.category2Id = this.$route.query.category2Id;
+      // this.searchParams.category3Id = this.$route.query.category3Id;
+      // this.searchParams.categoryName = this.$route.query.categoryName;
+      // this.searchParams.keyword = this.$route.query.keyword;
+      //Object.assign:ES6新增的语法，合并对象
+      Object.assign(this.searchParams,this.$route.query,this.$route.params);
     },
     computed:{
       // ...mapState({
