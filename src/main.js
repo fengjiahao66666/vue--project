@@ -18,6 +18,8 @@ import "swiper/css/swiper.css"
 // //测试
 // import {reqCategoryList} from '@/api';
 // reqCategoryList();
+// import {reqGetSearchInfo} from '@/api';
+// console.log(reqGetSearchInfo({}));
 
 Vue.config.productionTip = false
 
