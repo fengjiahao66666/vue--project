@@ -12,10 +12,10 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">iphone<i>×</i></li>
-            <li class="with-x">华为<i>×</i></li>
-            <li class="with-x">OPPO<i>×</i></li>
+            <!-- 分类面包屑 -->
+            <li class="with-x" v-if="searchParams.categoryName">{{ searchParams.categoryName }}<i @click="removeCategoryName">×</i></li>
+            <!-- 关键字面包屑 -->
+            <li class="with-x" v-if="searchParams.keyword">{{ searchParams.keyword }}<i @click="removeKeyword">×</i></li>
           </ul>
         </div>
 
@@ -144,11 +144,6 @@
         },
       };
     },
-    //组件挂载完毕执行一次（仅一次
-    mounted() {
-      //再发请求之前带给服务器参数【searchParams参数发生变化有数值带给服务器
-      this.getData();
-    },
     //当组件挂载完毕之前执行一次【先于mounted之前
     beforeMount(){
       //console.log(this.$route.query);
@@ -159,7 +154,14 @@
       // this.searchParams.categoryName = this.$route.query.categoryName;
       // this.searchParams.keyword = this.$route.query.keyword;
       //Object.assign:ES6新增的语法，合并对象
+      //发请求之前把接口需要传递的参数进行整理
       Object.assign(this.searchParams,this.$route.query,this.$route.params);
+      //console.log(this.$route);
+    },
+    //组件挂载完毕执行一次（仅一次
+    mounted() {
+      //再发请求之前带给服务器参数【searchParams参数发生变化有数值带给服务器
+      this.getData();
     },
     computed:{
       // ...mapState({
@@ -173,8 +175,54 @@
       //把这次请求封装成一个函数：当需要时调用即可
       getData(){
         this.$store.dispatch('getSearchList',this.searchParams);
+      },
+      //删除分类名字
+      removeCategoryName(){
+        //把带给服务器的数据置空了，还需要再次发请求
+        //带给服务器的参数都是可有可无的：如果属性值为空，还是会带过去
+        //如果把空值改为undefined，当前这个字段不会带给服务器
+        this.searchParams.categoryName = undefined;
+        this.searchParams.category1Id = undefined;
+        this.searchParams.category2Id = undefined;
+        this.searchParams.category3Id = undefined;
+        this.getData();
+        //地址栏也需要修改：进行路由的跳转
+        //本意是删除query参数，如果路径中出现params参数，不该删除，路由跳转时应该带过去
+        if(this.$route.params){
+          this.$router.push({name:"search",params:this.$route.params})
+        }
+      },
+      //删除关键字
+      removeKeyword(){
+        //给服务器带的参数置空
+        this.searchParams.keyword = undefined;
+        //再次发请求
+        this.getData();
+        //通知兄弟组件Header清除关键字
+        this.$bus.$emit("clear");
+        //进行路由的跳转
+        if(this.$route.query){
+          this.$router.push({name:"search",query:this.$route.query});
+        }
       }
     },
+    //数据监听：监听组件实例身上属性的属性值变化
+    watch:{
+      //监听路由的信息是否发生变化，如果过变化，再次发请求
+      $route(newValue,oldValue){
+        //再次发请求之前整理带给服务器的参数
+        Object.assign(this.searchParams,this.$route.query,this.$route.params);
+        //console.log(this.searchParams);
+        //再次发起ajax请求
+        this.getData();
+        //每一次请求完毕，应该吧相应的123级分类的id置空，接收下一次的id
+        //分类名和关键字不用清理：因为路由变化时会赋予新值
+        this.searchParams.category1Id = undefined;
+        this.searchParams.category2Id = undefined;
+        this.searchParams.category3Id = undefined;
+        //console.log(this.searchParams);
+      }
+    }
   }
 </script>
 
