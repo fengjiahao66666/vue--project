@@ -30,24 +30,13 @@
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
+              <!-- 排序结构 -->
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{active:isOne}" @click="changeOrder('1')">
+                  <a>综合<span v-show="isOne" class="iconfont" :class="{'icon-UP':isAsc,'icon-DOWN':isDesc}"></span></a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{active:isTwo}" @click="changeOrder('2')">
+                  <a>价格<span v-show="isTwo" class="iconfont" :class="{'icon-UP':isAsc,'icon-DOWN':isDesc}"></span></a>
                 </li>
               </ul>
             </div>
@@ -135,8 +124,8 @@
           categoryName: "",
           //关键字
           keyword: "",
-          //排序
-          order: "",
+          //排序：初始的状态应该是综合|降序
+          order: "1:desc",
           //分页器用的：代表当前第几页
           pageNo: 1,
           //代表每一页展示数据个数
@@ -172,7 +161,19 @@
       //   goodsList:state=>state.search.searchList.goodsList
       // })
       //mapGetters里面的写法传递的是数组，因为getters计算是没有划分模块的
-      ...mapGetters(['goodsList'])
+      ...mapGetters(['goodsList']),
+      isOne(){
+        return this.searchParams.order.indexOf('1') != -1
+      },
+      isTwo(){
+        return this.searchParams.order.indexOf('2') != -1
+      },
+      isAsc(){
+        return this.searchParams.order.indexOf('asc')!=-1
+      },
+      isDesc(){
+        return this.searchParams.order.indexOf('desc')!=-1
+      }
     },
     methods: {
       //向服务器发请求获取search模块数据 根据参数不同返回不同数据进行展示
@@ -242,6 +243,27 @@
         //console.log(index);
         //再次整理参数
         this.searchParams.props.splice(index,1);
+        //再次发请求
+        this.getData();
+      },
+      //排序操作
+      changeOrder(flag){
+        //flag形参：是一个标记，代表用户点击的是综合还是价格（点击时传进来的
+        let originOrder = this.searchParams.order;
+        //获取到的是最开始的状态
+        let originFlag = this.searchParams.order.split(":")[0];
+        let orginSort = this.searchParams.order.split(":")[1];
+        //准备一个新的order属性值
+        let newOrder = '';
+        //确定点击的一定是综合
+        if(flag == originFlag){
+          newOrder = `${originFlag}:${orginSort=="desc"?"asc":"desc"}`;
+        }else{
+          //点击的是价格
+          newOrder = `${flag}:${'desc'}`;
+        };
+        //将新的order赋予searchParams
+        this.searchParams.order = newOrder;
         //再次发请求
         this.getData();
       }
