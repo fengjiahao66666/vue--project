@@ -4,7 +4,7 @@
       <div class="fl key brand">品牌</div>
       <div class="value logos">
         <ul class="logo-list">
-          <li v-for="(trademark,index) in trademarkList" :key="trademark.tmId">{{trademark.tmName}}</li>
+          <li v-for="(trademark,index) in trademarkList" :key="trademark.tmId" @click="tradeMarkHandler(trademark)">{{trademark.tmName}}</li>
         </ul>
       </div>
       <div class="ext">
@@ -12,11 +12,14 @@
         <a href="javascript:void(0);">更多</a>
       </div>
     </div>
+    <!-- 平台售卖属性 -->
     <div class="type-wrap" v-for="(attr,index) in attrsList" :key="attr.attrId">
+      <!-- 属性 -->
       <div class="fl key">{{attr.attrName}}</div>
       <div class="fl value">
         <ul class="type-list">
-          <li v-for="(attrValue,index) in attr.attrValueList" :key="index">
+          <li v-for="(attrValue,index) in attr.attrValueList" :key="attrValue" @click="attrInfo(attr,attrValue)">
+            <!-- 属性值 -->
             <a>{{ attrValue }}</a>
           </li>
         </ul>
@@ -32,7 +35,23 @@
     name: 'SearchSelector',
     computed:{
       ...mapGetters(['trademarkList',"attrsList"])
-    }
+    },
+    methods: {
+      //品牌的事件处理函数
+      tradeMarkHandler(trademark){
+        //点击了品牌，还是需要整理参数，向服务器发请求获取数据展示
+        //在哪个组件发请求：父组件  因为父组件中的serchparams参数是带给服务器的参数
+        //子组件需要把你点击品牌的信息给父组件传过去（子给父：自定义事件）
+        //console.log(trademark);
+        this.$emit('trademarkInfo',trademark);
+      },
+      //平台售卖属性值的点击事件
+      attrInfo(attr,attrValue){
+        //["属性ID：属性值：属性名"]
+        //console.log(attr,attrValue);
+        this.$emit('attrInfo',attr,attrValue);
+      }
+    },
   }
 </script>
 

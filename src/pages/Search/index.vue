@@ -16,11 +16,15 @@
             <li class="with-x" v-if="searchParams.categoryName">{{ searchParams.categoryName }}<i @click="removeCategoryName">×</i></li>
             <!-- 关键字面包屑 -->
             <li class="with-x" v-if="searchParams.keyword">{{ searchParams.keyword }}<i @click="removeKeyword">×</i></li>
+            <!-- 品牌面包屑 -->
+            <li class="with-x" v-if="searchParams.trademark">{{ searchParams.trademark.split(":")[1] }}<i @click="removeTradeMark">×</i></li>
+            <!-- 平台售卖的属性值面包屑 -->
+            <li class="with-x" v-for="(attrValue,index) in searchParams.props" :key="index">{{ attrValue.split(":")[1] }}<i @click="removeAttr(index)">×</i></li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector @trademarkInfo="trademarkInfo" @attrInfo="attrInfo"/>
 
         <!--details-->
         <div class="details clearfix">
@@ -138,7 +142,7 @@
           //代表每一页展示数据个数
           pageSize: 3,
           //平台售卖属性操作带的参数
-          props: [""],
+          props: [],
           //品牌
           trademark: ""
         },
@@ -204,6 +208,42 @@
         if(this.$route.query){
           this.$router.push({name:"search",query:this.$route.query});
         }
+      },
+      //自定义事件的回调
+      trademarkInfo(trademark){
+        //1，整理品牌字段的参数 
+        this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`;
+        //再次发请求获取search模块数据进行展示
+        this.getData();
+        //console.log("父组件",trademark);
+      },
+      //删除品牌的信息
+      removeTradeMark(){
+        //将品牌信息置空
+        this.searchParams.trademark = undefined;
+        //再次发请求
+        this.getData();
+      },
+      //收集平台属性地方的回调函数（自定义事件）
+      attrInfo(attr,attrValue){
+        //console.log(attr,attrValue);
+        //参数格式整理好
+        let props = `${attr.attrId}:${attrValue}:${attr.attrName}`;
+        //数组去重
+        //if语句里面只有一行代码可以省略大括号
+        if(this.searchParams.props.indexOf(props)==-1){
+          this.searchParams.props.push(props);
+        }
+        //发请求
+        this.getData();
+      },
+      //删除售卖属性
+      removeAttr(index){
+        //console.log(index);
+        //再次整理参数
+        this.searchParams.props.splice(index,1);
+        //再次发请求
+        this.getData();
       }
     },
     //数据监听：监听组件实例身上属性的属性值变化
