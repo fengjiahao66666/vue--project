@@ -24,7 +24,7 @@
         </div>
 
         <!--selector-->
-        <SearchSelector @trademarkInfo="trademarkInfo" @attrInfo="attrInfo"/>
+        <SearchSelector @trademarkInfo="trademarkInfo" @attrInfo="attrInfo" @getPageNo="getPageNo"/>
 
         <!--details-->
         <div class="details clearfix">
@@ -69,7 +69,7 @@
             </ul>
           </div>
           <!-- 分页器：测试阶段，后需要替换 -->
-          <Pagination :pageNo="8" :pageSize="3" :total="91" continues="5"/>
+          <Pagination :pageNo="searchParams.pageNo" :pageSize="searchParams.pageSize" :total="total" continues="5"/>
         </div>
       </div>
     </div>
@@ -78,7 +78,7 @@
 
 <script>
   import SearchSelector from './SearchSelector/SearchSelector';
-  import { mapGetters } from 'vuex';
+  import { mapGetters,mapState } from 'vuex';
   // import { mapState } from 'vuex';
   export default {
     name: 'Search',
@@ -100,7 +100,7 @@
           //排序：初始的状态应该是综合|降序
           order: "1:desc",
           //分页器用的：代表当前第几页
-          pageNo: 1,
+          pageNo: 3,
           //代表每一页展示数据个数
           pageSize: 3,
           //平台售卖属性操作带的参数
@@ -146,7 +146,11 @@
       },
       isDesc(){
         return this.searchParams.order.indexOf('desc')!=-1
-      }
+      },
+      //获取search模块展示的产品一共多少数据
+      ...mapState({
+        total:state=>state.search.searchList.total
+      })
     },
     methods: {
       //向服务器发请求获取search模块数据 根据参数不同返回不同数据进行展示
@@ -237,6 +241,13 @@
         };
         //将新的order赋予searchParams
         this.searchParams.order = newOrder;
+        //再次发请求
+        this.getData();
+      },
+      //自定义事件的回调，获取当前第几页
+      getPageNo(pageNo){
+        //整理带给服务器的参数
+        this.searchParams.pageNo = pageNo;
         //再次发请求
         this.getData();
       }

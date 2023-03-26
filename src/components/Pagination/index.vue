@@ -1,18 +1,15 @@
 <template>
     <div class="pagination">
-      <button>上一页</button>
-      <button>1</button>
-      <button>···</button>
+      <button :disabled="pageNo==1" @click="$emit('getPageNo',pageNo-1)">上一页</button>
+      <button v-if="startNumAndEndNum.start>1" @click="$emit('getPageNo',1)">1</button>
+      <button  v-if="startNumAndEndNum.start>2">···</button>
   
-      <button>3</button>
-      <button>4</button>
-      <button>5</button>
-      <button>6</button>
-      <button>7</button>
+      <!-- 中间部分 -->
+      <button v-for="(page,index) in startNumAndEndNum.end" :key="index"  v-if="page>=startNumAndEndNum.start" @click="$emit('getPageNo',page)">{{ page }}</button>
       
-      <button>···</button>
-      <button>{{ totalPage }}</button>
-      <button>下一页</button>
+      <button v-if="startNumAndEndNum.end<totalPage-1">···</button>
+      <button v-if="startNumAndEndNum.end<totalPage" @click="$emit('getPageNo',totalPage)">{{ totalPage }}</button>
+      <button :disabled="pageNo==totalPage" @click="$emit('getPageNo',pageNo+1)">下一页</button>
       
       <button style="margin-left: 30px">共 {{ total }} 条</button>
       <h1>{{ startNumAndEndNum }}--{{ pageNo }}</h1>
@@ -53,7 +50,7 @@
                 //把出现不正常现象【end数字大于总页码】纠正
                 if(end>totalPage){
                     end=totalPage;
-                    start=totalPage-continues+1;
+                    start=totalPage - continues + 1;
                 }
             }
             return {start,end};
